@@ -1,0 +1,172 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Усіх із Паскох",
+        "description": "Demo my Project ",
+        "contact": {
+            "email": "admin@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/categories": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "operationId": "d1f6c377f807ef0e6417aaa000d81e3c",
+                "responses": {
+                    "200": {
+                        "description": "List Categories."
+                    }
+                }
+            }
+        },
+        "/api/categories/create": {
+            "post": {
+                "tags": [
+                    "Category"
+                ],
+                "operationId": "196294aada4810311bbc2174c5af76d1",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Add Category."
+                    }
+                }
+            }
+        },
+        "/api/categories/{id}": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "operationId": "9660e8e9bbd46bf74d5d41666a9d7793",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Ідентифікатор категорії",
+                        "required": true,
+                        "schema": {
+                            "type": "number",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List Categories."
+                    },
+                    "404": {
+                        "description": "Wrong id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sorry, wrong Category Id has been sent. Pls try another one."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Category"
+                ],
+                "operationId": "9df31785d832daffd2d890c12792b58c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Ідентифікатор категорії",
+                        "required": true,
+                        "schema": {
+                            "type": "number",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успішне видалення категорії"
+                    },
+                    "404": {
+                        "description": "Категорії не знайдено"
+                    },
+                    "401": {
+                        "description": "Не авторизований"
+                    }
+                }
+            }
+        },
+        "/api/categories/edit/{id}": {
+            "post": {
+                "tags": [
+                    "Category"
+                ],
+                "operationId": "c89ca3d973041c422881f82b1766d637",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Ідентифікатор категорії",
+                        "required": true,
+                        "schema": {
+                            "type": "number",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Add Category."
+                    }
+                }
+            }
+        }
+    }
+}
