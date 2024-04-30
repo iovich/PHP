@@ -1,4 +1,52 @@
 <?php global $dbh; ?>
+<?php include_once($_SERVER['DOCUMENT_ROOT'] . "/config/constants.php"); ?>
+<?php include_once $_SERVER["DOCUMENT_ROOT"] . "/connection_database.php"; ?>
+
+<?php
+$error_message = "";
+$name_value = "";
+$datepublish_value = "";
+$description_value = "";
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $name = $_POST['name'];
+    $datepublish = $_POST['datepublish'];
+    $description = $_POST['description'];
+    $image = $_FILES["image"];
+    $folderName = $_SERVER['DOCUMENT_ROOT'].'/'. UPLOADING;
+    if (!file_exists($folderName)) {
+        mkdir($folderName, 0777);
+    }
+
+    $image_save = "";
+    if(isset($_FILES['image'])) {
+        //унікальна назва файлу
+        $image_save = uniqid() . '.' . pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION);
+        $path_save = $folderName.'/'.$image_save;
+        move_uploaded_file($_FILES['image']['tmp_name'], $path_save);
+    }
+
+    $stmt_check = $dbh->prepare("SELECT COUNT(*) FROM news WHERE name = ?");
+    $stmt_check->execute([$name]);
+    $count = $stmt_check->fetchColumn();
+
+    if ($count > 0) {
+        $error_message = "Назва новини вже існує. Введіть унікальну назву.";
+        $name_value = $name;
+        $datepublish_value = $datepublish;
+        $description_value = $description;
+
+    } else {
+        $stmt = $dbh->prepare("INSERT INTO news (name, datepublish, description, image) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$name, $datepublish, $description, $image_save]);
+        $lastInsertedId = $dbh->lastInsertId();
+        header("Location: /?id=".$lastInsertedId);
+        exit();
+    }
+}
+?>
+
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -15,37 +63,38 @@
 
     <h1 class="text-center">Додати новину</h1>
 
+    <form method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="name" class="form-label">Назва</label>
+            <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($name_value); ?>">
+            <?php if (!empty($error_message)) { ?>
+                <div class="text-danger"><?php echo $error_message; ?></div>
+            <?php } ?>
+        </div>
 
-    <?php include_once $_SERVER["DOCUMENT_ROOT"] . "/connection_database.php"; ?>
+        <div class="mb-3">
+            <label for="datepublish" class="form-label">Дата публікації</label>
+            <input type="datetime-local" class="form-control" id="datepublish" name="datepublish" value="<?php echo htmlspecialchars($datepublish_value); ?>">
+        </div>
 
-    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-        <div class="form-group">
-            <label for="name">Назва:</label>
-            <input type="text" class="form-control" id="name" name="name">
+        <div class="mb-3">
+            <div class="form-floating">
+                <textarea class="form-control" placeholder="Вкажіть опис тут" name="description" id="description" style="height: 100px"><?php echo htmlspecialchars($description_value); ?></textarea>
+                <label for="description">Опис</label>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="datepublish">Дата публікації:</label>
-            <input type="date" class="form-control" id="datepublish" name="datepublish">
+
+        <div class="mb-3">
+            <label for="formFile" class="form-label">Оберіть фото</label>
+            <input class="form-control" type="file" id="image" name="image" accept="image/*">
         </div>
-        <div class="form-group">
-            <label for="description">Опис:</label>
-            <textarea class="form-control" id="description" name="description" rows="5"></textarea>
+
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Додати</button>
         </div>
-        <button type="submit" name="submit" class="btn btn-primary">Готово</button>
     </form>
 
-    <?php
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
-        $name = $_POST['name'];
-        $datepublish = $_POST['datepublish'];
-        $description = $_POST['description'];
 
-        $stmt = $dbh->prepare('INSERT INTO news (name, datepublish, description) VALUES (?, ?, ?)');
-        $stmt->execute([$name, $datepublish, $description]);
-
-        header("Location: index.php");
-        exit();
-    } ?>
 
 
 </div>

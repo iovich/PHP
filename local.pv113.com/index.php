@@ -44,6 +44,7 @@
             $name = $row["name"];
             $datepublish = $row["datepublish"];
             $description = $row["description"];
+            $image = $row["image"];
             $hrefUpdate = "/update.php?id=$id";
             $hrefDelete = "/delete.php?id=$id";
             echo "
@@ -52,6 +53,7 @@
             <td>$name</td>
             <td>$datepublish</td>
             <td>$description</td>
+            <td>$image</td>
             <td><a href='$hrefUpdate' class='$btn'>Змінити</a></td>
             <td><a href='$hrefDelete' class='$btn'>Видалити</a></td>
         </tr>
